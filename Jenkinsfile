@@ -17,6 +17,7 @@ pipeline {
   }
 
   stages {
+
     stage('Checkout') {
       steps {
         checkout scm
@@ -36,7 +37,7 @@ pipeline {
       }
       post {
         always {
-          // junit 'backend/test-results.xml' // Uncomment when test reporting is added
+          echo "Backend test stage completed"
         }
       }
     }
@@ -54,7 +55,7 @@ pipeline {
       }
       post {
         always {
-          // junit 'frontend/test-results.xml' // Uncomment when test reporting is added
+          echo "Frontend test stage completed"
         }
       }
     }
@@ -65,7 +66,6 @@ pipeline {
           def shortSha = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
           def buildDate = sh(returnStdout: true, script: 'date +%Y%m%d-%H%M%S').trim()
           
-          // Build backend image
           sh """
             docker build \
               --tag ${BACKEND_IMAGE}:latest \
@@ -76,7 +76,6 @@ pipeline {
               backend
           """
           
-          // Build frontend image
           sh """
             docker build \
               --tag ${FRONTEND_IMAGE}:latest \
@@ -115,7 +114,6 @@ pipeline {
           def shortSha = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
           def imageTag = "${REGISTRY}/${DOCKERHUB_USER}"
           
-          // Tag and push backend images
           sh """
             docker tag ${BACKEND_IMAGE}:latest ${imageTag}/${BACKEND_IMAGE}:${shortSha}
             docker tag ${BACKEND_IMAGE}:latest ${imageTag}/${BACKEND_IMAGE}:latest
@@ -123,7 +121,6 @@ pipeline {
             docker push ${imageTag}/${BACKEND_IMAGE}:latest
           """
           
-          // Tag and push frontend images
           sh """
             docker tag ${FRONTEND_IMAGE}:latest ${imageTag}/${FRONTEND_IMAGE}:${shortSha}
             docker tag ${FRONTEND_IMAGE}:latest ${imageTag}/${FRONTEND_IMAGE}:latest
@@ -152,20 +149,17 @@ pipeline {
           def imageTag = "${REGISTRY}/${DOCKERHUB_USER}"
           
           dir('k8s') {
-            // Update image tags in deployment files
             sh """
               sed -i 's|restaurant/backend:latest|${imageTag}/${BACKEND_IMAGE}:${shortSha}|g' backend-deployment.yaml
               sed -i 's|restaurant/frontend:latest|${imageTag}/${FRONTEND_IMAGE}:${shortSha}|g' frontend-deployment.yaml
             """
-            
-            // Apply Kubernetes manifests
+
             sh """
               kubectl apply -f namespace.yaml
               kubectl apply -f mongo-statefulset.yaml
               kubectl apply -f backend-deployment.yaml
               kubectl apply -f frontend-deployment.yaml
-              
-              # Wait for rollout
+
               kubectl rollout status deployment/backend -n ${KUBERNETES_NAMESPACE} --timeout=5m
               kubectl rollout status deployment/frontend -n ${KUBERNETES_NAMESPACE} --timeout=5m
             """
@@ -185,16 +179,9 @@ pipeline {
     }
     failure {
       echo 'Pipeline failed!'
-      // Add notification steps here (email, Slack, etc.)
     }
     always {
       cleanWs()
     }
   }
 }
-
-
-
-
-
-
