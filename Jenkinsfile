@@ -66,21 +66,20 @@ pipeline {
             }
         }
 
-        stage('Push Images') {
-            steps {
-                script {
-                    def repo = "docker.io/${DOCKERHUB_USER}"
+    stage('Push Images') {
+  steps {
+    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+      bat """
+        docker tag restaurant-backend:latest %USER%/restaurant-backend:latest
+        docker push %USER%/restaurant-backend:latest
 
-                    bat """
-                        docker tag ${BACKEND_IMAGE}:latest ${repo}/${BACKEND_IMAGE}:latest
-                        docker push ${repo}/${BACKEND_IMAGE}:latest
+        docker tag restaurant-frontend:latest %USER%/restaurant-frontend:latest
+        docker push %USER%/restaurant-frontend:latest
+      """
+    }
+  }
+}
 
-                        docker tag ${FRONTEND_IMAGE}:latest ${repo}/${FRONTEND_IMAGE}:latest
-                        docker push ${repo}/${FRONTEND_IMAGE}:latest
-                    """
-                }
-            }
-        }
 
         stage('Deploy to Kubernetes') {
             steps {
@@ -102,3 +101,4 @@ pipeline {
         failure { echo "Pipeline failed!" }
     }
 }
+
