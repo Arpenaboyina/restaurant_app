@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         REGISTRY = "docker.io"
-        DOCKERHUB_USER = "arpenaboyina"  // update with your username
+        DOCKERHUB_USER = "arpenaboyina"   // your Docker Hub username
         BACKEND_IMAGE = "restaurant-backend"
         FRONTEND_IMAGE = "restaurant-frontend"
         KUBERNETES_NAMESPACE = "restaurant"
@@ -11,12 +11,14 @@ pipeline {
 
     stages {
 
+        /* ----------------------- CHECKOUT ----------------------- */
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
+        /* ----------------------- BACKEND TEST ----------------------- */
         stage('Backend Test') {
             steps {
                 dir('backend') {
@@ -31,6 +33,7 @@ pipeline {
             post { always { echo "Backend test completed" } }
         }
 
+        /* ----------------------- FRONTEND TEST ----------------------- */
         stage('Frontend Test') {
             steps {
                 dir('frontend') {
@@ -45,6 +48,7 @@ pipeline {
             post { always { echo "Frontend test completed" } }
         }
 
+        /* ----------------------- BUILD IMAGES ----------------------- */
         stage('Build Docker Images') {
             steps {
                 bat """
@@ -54,11 +58,16 @@ pipeline {
             }
         }
 
+        /* ----------------------- LOGIN DOCKER HUB ----------------------- */
         stage('Login to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub',
-                                                 usernameVariable: 'DH_USER',
-                                                 passwordVariable: 'DH_PASS')]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub',
+                        usernameVariable: 'DH_USER',
+                        passwordVariable: 'DH_PASS'
+                    )
+                ]) {
                     bat """
                         echo %DH_PASS% | docker login -u %DH_USER% --password-stdin
                     """
@@ -66,24 +75,33 @@ pipeline {
             }
         }
 
-    stage('Push Images') {
-  steps {
-    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-      bat """
-        docker tag restaurant-backend:latest %USER%/restaurant-backend:latest
-        docker push %USER%/restaurant-backend:latest
+        /* ----------------------- PUSH IMAGES ----------------------- */
+        stage('Push Images') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub',
+                        usernameVariable: 'DH_USER',
+                        passwordVariable: 'DH_PASS'
+                    )
+                ]) {
+                    bat """
+                        docker tag ${BACKEND_IMAGE}:latest %DH_USER%/${BACKEND_IMAGE}:latest
+                        docker push %DH_USER%/${BACKEND_IMAGE}:latest
 
-        docker tag restaurant-frontend:latest %USER%/restaurant-frontend:latest
-        docker push %USER%/restaurant-frontend:latest
-      """
-    }
-  }
-}
+                        docker tag ${FRONTEND_IMAGE}:latest %DH_USER%/${FRONTEND_IMAGE}:latest
+                        docker push %DH_USER%/${FRONTEND_IMAGE}:latest
+                    """
+                }
+            }
+        }
 
-
+        /* ----------------------- DEPLOY TO K8s ----------------------- */
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                withCredentials([
+                    file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')
+                ]) {
                     bat """
                         kubectl --kubeconfig=%KUBECONFIG% apply -f k8s\\namespace.yaml
                         kubectl --kubeconfig=%KUBECONFIG% apply -f k8s\\mongo-statefulset.yaml
@@ -101,4 +119,3 @@ pipeline {
         failure { echo "Pipeline failed!" }
     }
 }
-
