@@ -1,0 +1,64 @@
+version: "3.9"
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - appnet
+
+  backend:
+    build:
+      context: ./backend
+    image: restaurant/backend:latest
+    depends_on:
+      - mongo
+    environment:
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/restaurant
+      - OWNER_PASSWORD=${OWNER_PASSWORD:-change_me_owner_password}
+      - OWNER_JWT_SECRET=${OWNER_JWT_SECRET:-owner_secret}
+      - TABLE_JWT_SECRET=${TABLE_JWT_SECRET:-table_secret}
+      - CLIENT_ORIGIN=http://localhost:5173
+    ports:
+      - "4000:4000"
+    networks:
+      - appnet
+
+  frontend:
+    build:
+      context: ./frontend
+    image: restaurant/frontend:latest
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+    networks:
+      - appnet
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - appnet
+
+volumes:
+  mongo_data:
+  jenkins_home:
+
+networks:
+  appnet:
+    driver: bridge
+
+
+
+
