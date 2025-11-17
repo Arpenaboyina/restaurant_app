@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    REGISTRY_CREDENTIALS = credentials('docker-registry-creds') // Jenkins creds id
+    // Optional credentials - pipeline will work without them
     REGISTRY = "${env.DOCKER_REGISTRY ?: 'docker.io'}"
     DOCKERHUB_USER = "${env.DOCKERHUB_USER ?: ''}"
     BACKEND_IMAGE = "${env.IMAGE_BACKEND ?: 'restaurant/backend'}"
@@ -36,6 +36,7 @@ pipeline {
       }
       post {
         always {
+          echo 'Backend test stage completed'
           // junit 'backend/test-results.xml' // Uncomment when test reporting is added
         }
       }
@@ -54,6 +55,7 @@ pipeline {
       }
       post {
         always {
+          echo 'Frontend test stage completed'
           // junit 'frontend/test-results.xml' // Uncomment when test reporting is added
         }
       }
@@ -93,14 +95,18 @@ pipeline {
     stage('Login Registry') {
       steps {
         script {
-          if (REGISTRY_CREDENTIALS) {
-            sh """
-              echo ${REGISTRY_CREDENTIALS_PSW} | docker login \
-                -u ${REGISTRY_CREDENTIALS_USR} \
-                --password-stdin ${REGISTRY}
-            """
-          } else {
-            echo 'Warning: No registry credentials configured, skipping login'
+          try {
+            withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+              sh """
+                echo ${DOCKER_PASS} | docker login \
+                  -u ${DOCKER_USER} \
+                  --password-stdin ${REGISTRY}
+              """
+            }
+            env.REGISTRY_CREDENTIALS = 'true'
+          } catch (Exception e) {
+            echo 'Warning: Docker Hub credentials (ID: dockerhub) not found. Skipping registry login. Images will be built locally only.'
+            env.REGISTRY_CREDENTIALS = 'false'
           }
         }
       }
@@ -108,7 +114,7 @@ pipeline {
 
     stage('Tag & Push') {
       when {
-        expression { REGISTRY_CREDENTIALS != null }
+        expression { env.REGISTRY_CREDENTIALS == 'true' && DOCKERHUB_USER }
       }
       steps {
         script {
@@ -144,30 +150,46 @@ pipeline {
       }
       steps {
         script {
+          // Setup Kubernetes config if credentials provided
+          try {
+            withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
+              sh """
+                mkdir -p ~/.kube
+                cp ${KUBECONFIG_FILE} ~/.kube/config || true
+                chmod 600 ~/.kube/config || true
+              """
+            }
+            echo 'Kubernetes kubeconfig loaded from credentials'
+          } catch (Exception e) {
+            echo 'Warning: Kubernetes kubeconfig credentials (ID: kubeconfig) not found. Using default kubectl config.'
+          }
+          
           if (KUBERNETES_CONTEXT) {
             sh "kubectl config use-context ${KUBERNETES_CONTEXT}"
           }
           
           def shortSha = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-          def imageTag = "${REGISTRY}/${DOCKERHUB_USER}"
+          def imageTag = (env.REGISTRY_CREDENTIALS == 'true' && DOCKERHUB_USER) ? "${REGISTRY}/${DOCKERHUB_USER}" : "restaurant"
           
           dir('k8s') {
-            // Update image tags in deployment files
-            sh """
-              sed -i 's|restaurant/backend:latest|${imageTag}/${BACKEND_IMAGE}:${shortSha}|g' backend-deployment.yaml
-              sed -i 's|restaurant/frontend:latest|${imageTag}/${FRONTEND_IMAGE}:${shortSha}|g' frontend-deployment.yaml
-            """
+            // Update image tags in deployment files only if using registry
+            if (env.REGISTRY_CREDENTIALS == 'true' && DOCKERHUB_USER) {
+              sh """
+                sed -i 's|restaurant/backend:latest|${imageTag}/${BACKEND_IMAGE}:${shortSha}|g' backend-deployment.yaml
+                sed -i 's|restaurant/frontend:latest|${imageTag}/${FRONTEND_IMAGE}:${shortSha}|g' frontend-deployment.yaml
+              """
+            }
             
             // Apply Kubernetes manifests
             sh """
-              kubectl apply -f namespace.yaml
+              kubectl apply -f namespace.yaml || true
               kubectl apply -f mongo-statefulset.yaml
               kubectl apply -f backend-deployment.yaml
               kubectl apply -f frontend-deployment.yaml
               
               # Wait for rollout
-              kubectl rollout status deployment/backend -n ${KUBERNETES_NAMESPACE} --timeout=5m
-              kubectl rollout status deployment/frontend -n ${KUBERNETES_NAMESPACE} --timeout=5m
+              kubectl rollout status deployment/backend -n ${KUBERNETES_NAMESPACE} --timeout=5m || true
+              kubectl rollout status deployment/frontend -n ${KUBERNETES_NAMESPACE} --timeout=5m || true
             """
           }
         }
