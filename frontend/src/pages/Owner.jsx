@@ -208,6 +208,7 @@ export default function Owner() {
               placeholder="Owner password"
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border p-3 rounded-lg"
+              autoComplete="new-password"
             />
 
             {loginError && (

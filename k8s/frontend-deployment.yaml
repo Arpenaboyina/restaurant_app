@@ -20,22 +20,25 @@ spec:
           ports:
             - containerPort: 80
               name: http
+          volumeMounts:
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /run
+            - name: nginx-log
+              mountPath: /var/log/nginx
           livenessProbe:
             httpGet:
               path: /health
               port: 80
             initialDelaySeconds: 10
             periodSeconds: 10
-            timeoutSeconds: 3
-            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health
               port: 80
             initialDelaySeconds: 5
             periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
           resources:
             requests:
               memory: "64Mi"
@@ -44,13 +47,20 @@ spec:
               memory: "256Mi"
               cpu: "200m"
           securityContext:
-            runAsNonRoot: true
+            runAsNonRoot: false
             runAsUser: 101
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        - name: nginx-log
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -65,7 +75,3 @@ spec:
       targetPort: 80
       nodePort: 30080
   type: NodePort
-
-
-
-

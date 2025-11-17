@@ -24,3 +24,14 @@ npm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Kubernetes temporary files
+deployed.yaml
+*.yaml.bak
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

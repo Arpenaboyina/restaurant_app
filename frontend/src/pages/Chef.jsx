@@ -55,6 +55,7 @@ export default function Chef() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Staff password"
             type="password"
+            autoComplete="new-password"
             required
             className="border rounded-lg p-3"
           />
