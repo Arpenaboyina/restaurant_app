@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    REGISTRY_CREDENTIALS = credentials('docker-registry-creds') // Jenkins creds id
+    REGISTRY_CREDENTIALS = credentials('dockerhub') // Jenkins creds id
     REGISTRY = "${env.DOCKER_REGISTRY ?: 'docker.io'}"
     DOCKERHUB_USER = "${env.DOCKERHUB_USER ?: ''}"
     BACKEND_IMAGE = "${env.IMAGE_BACKEND ?: 'restaurant/backend'}"
@@ -192,6 +192,7 @@ pipeline {
     }
   }
 }
+
 
 
 
