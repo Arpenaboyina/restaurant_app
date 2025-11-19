@@ -25,7 +25,7 @@ export default function About() {
 							We've been serving delicious meals for years, and now we're bringing the future 
 							of dining to your table.
 						</p>
-						<p className="text-muted">
+						<p className="text-white">
 							Our mission is to provide an exceptional dining experience through innovative 
 							digital solutions. We combine traditional recipes with modern convenience, 
 							allowing you to enjoy great food with ease and comfort.
@@ -47,7 +47,7 @@ export default function About() {
 						<div className="card h-100 border-0 shadow-sm">
 							<div className="card-body p-4">
 								<h4 className="card-title mb-3">✨ Quality</h4>
-								<p className="card-text text-muted">
+								<p className="card-text text-white">
 									We use only the finest ingredients and prepare every dish with care and attention to detail.
 								</p>
 							</div>
@@ -57,7 +57,7 @@ export default function About() {
 						<div className="card h-100 border-0 shadow-sm">
 							<div className="card-body p-4">
 								<h4 className="card-title mb-3">🚀 Innovation</h4>
-								<p className="card-text text-muted">
+								<p className="card-text text-white">
 									We embrace technology to enhance your dining experience while maintaining the warmth of traditional service.
 								</p>
 							</div>
@@ -67,7 +67,7 @@ export default function About() {
 						<div className="card h-100 border-0 shadow-sm">
 							<div className="card-body p-4">
 								<h4 className="card-title mb-3">❤️ Customer First</h4>
-								<p className="card-text text-muted">
+								<p className="card-text text-white">
 									Your satisfaction is our priority. We listen to feedback and continuously improve our service.
 								</p>
 							</div>
@@ -81,28 +81,28 @@ export default function About() {
 				<div className="row">
 					<div className="col-md-6 mb-4">
 						<h3 className="mb-3">🌐 Digital Menu System</h3>
-						<p className="text-muted">
+						<p className="text-white">
 							Our state-of-the-art digital menu system allows you to browse items, see real-time availability, 
 							customize your orders, and track your meal from kitchen to table.
 						</p>
 					</div>
 					<div className="col-md-6 mb-4">
 						<h3 className="mb-3">📱 QR Code Ordering</h3>
-						<p className="text-muted">
+						<p className="text-white">
 							Simply scan the QR code on your table to access our menu instantly. No need to wait for a waiter 
 							or handle physical menus.
 						</p>
 					</div>
 					<div className="col-md-6 mb-4">
 						<h3 className="mb-3">⚡ Real-Time Updates</h3>
-						<p className="text-muted">
+						<p className="text-white">
 							Track your order status in real-time. Know exactly when your food is being prepared, 
 							when it's ready, and when it's served.
 						</p>
 					</div>
 					<div className="col-md-6 mb-4">
 						<h3 className="mb-3">🎨 Customization</h3>
-						<p className="text-muted">
+						<p className="text-white">
 							Personalize every dish to your taste. Add extra toppings, adjust spice levels, 
 							or request special dietary accommodations.
 						</p>
@@ -147,5 +147,6 @@ export default function About() {
 		</div>
 	);
 }
+
 
 
