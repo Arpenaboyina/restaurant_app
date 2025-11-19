@@ -104,6 +104,10 @@ pipeline {
                         kubectl set image deployment/backend backend=%DH_USER%/restaurant-backend:latest -n restaurant
                         kubectl set image deployment/frontend frontend=%DH_USER%/restaurant-frontend:latest -n restaurant
 
+                        echo Restarting pods so they pull latest images...
+                kubectl rollout restart deployment/backend -n restaurant
+                kubectl rollout restart deployment/frontend -n restaurant
+                
                         echo Waiting for rollout...
                         kubectl rollout status deployment/backend -n restaurant --timeout=300s
                         kubectl rollout status deployment/frontend -n restaurant --timeout=300s
@@ -159,5 +163,6 @@ pipeline {
         failure { echo "Pipeline failed!" }
     }
 }
+
 
 
