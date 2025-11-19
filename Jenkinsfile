@@ -77,80 +77,80 @@ pipeline {
             }
         }
 
-    //     stage('Deploy to Kubernetes') {
-    //         steps {
-    //             withCredentials([
-    //                 file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE'),
-    //                 usernamePassword(
-    //                     credentialsId: 'dockerhub',
-    //                     usernameVariable: 'DH_USER',
-    //                     passwordVariable: 'DH_PASS'
-    //                 )
-    //             ]) {
-
-    //                 bat """
-    //                     set KUBECONFIG=%KUBECONFIG_FILE%
-
-    //                     echo Applying Kubernetes Manifests...
-
-    //                     kubectl apply -f k8s\\namespace.yaml
-    //                     kubectl apply -f k8s\\mongo-statefulset.yaml
-    //                     kubectl apply -f k8s\\backend-deployment.yaml
-    //                     kubectl apply -f k8s\\frontend-deployment.yaml
-    //                     kubectl apply -f k8s\\ingress.yaml
-
-    //                     echo Updating deployment images to Docker Hub...
-
-    //                     kubectl set image deployment/backend backend=%DH_USER%/restaurant-backend:latest -n restaurant
-    //                     kubectl set image deployment/frontend frontend=%DH_USER%/restaurant-frontend:latest -n restaurant
-
-    //                     echo Waiting for rollout...
-    //                     kubectl rollout status deployment/backend -n restaurant --timeout=300s
-    //                     kubectl rollout status deployment/frontend -n restaurant --timeout=300s
-    //                 """
-    //             }
-    //         }
-    //     }
-    // }
-
         stage('Deploy to Kubernetes') {
-    steps {
-        withCredentials([
-            file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE'),
-            usernamePassword(
-                credentialsId: 'dockerhub',
-                usernameVariable: 'DH_USER',
-                passwordVariable: 'DH_PASS'
-            )
-        ]) {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE'),
+                    usernamePassword(
+                        credentialsId: 'dockerhub',
+                        usernameVariable: 'DH_USER',
+                        passwordVariable: 'DH_PASS'
+                    )
+                ]) {
 
-            bat """
-                set KUBECONFIG=%KUBECONFIG_FILE%
+                    bat """
+                        set KUBECONFIG=%KUBECONFIG_FILE%
 
-                echo Applying Kubernetes Manifests...
+                        echo Applying Kubernetes Manifests...
 
-                kubectl apply -f k8s\\namespace.yaml
-                kubectl apply -f k8s\\mongo-statefulset.yaml
-                kubectl apply -f k8s\\backend-deployment.yaml
-                kubectl apply -f k8s\\frontend-deployment.yaml
-                kubectl apply -f k8s\\ingress.yaml
+                        kubectl apply -f k8s\\namespace.yaml
+                        kubectl apply -f k8s\\mongo-statefulset.yaml
+                        kubectl apply -f k8s\\backend-deployment.yaml
+                        kubectl apply -f k8s\\frontend-deployment.yaml
+                        kubectl apply -f k8s\\ingress.yaml
 
-                echo Updating deployment images to Docker Hub...
+                        echo Updating deployment images to Docker Hub...
 
-                kubectl set image deployment/backend backend=%DH_USER%/restaurant-backend:latest -n restaurant
-                kubectl set image deployment/frontend frontend=%DH_USER%/restaurant-frontend:latest -n restaurant
+                        kubectl set image deployment/backend backend=%DH_USER%/restaurant-backend:latest -n restaurant
+                        kubectl set image deployment/frontend frontend=%DH_USER%/restaurant-frontend:latest -n restaurant
 
-                echo Restarting pods so they pull latest images...
-                kubectl rollout restart deployment/backend -n restaurant
-                kubectl rollout restart deployment/frontend -n restaurant
-
-                echo Waiting for rollout...
-                kubectl rollout status deployment/backend -n restaurant --timeout=300s
-                kubectl rollout status deployment/frontend -n restaurant --timeout=300s
-            """
+                        echo Waiting for rollout...
+                        kubectl rollout status deployment/backend -n restaurant --timeout=300s
+                        kubectl rollout status deployment/frontend -n restaurant --timeout=300s
+                    """
+                }
+            }
         }
     }
-}
+
+//         stage('Deploy to Kubernetes') {
+//     steps {
+//         withCredentials([
+//             file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE'),
+//             usernamePassword(
+//                 credentialsId: 'dockerhub',
+//                 usernameVariable: 'DH_USER',
+//                 passwordVariable: 'DH_PASS'
+//             )
+//         ]) {
+
+//             bat """
+//                 set KUBECONFIG=%KUBECONFIG_FILE%
+
+//                 echo Applying Kubernetes Manifests...
+
+//                 kubectl apply -f k8s\\namespace.yaml
+//                 kubectl apply -f k8s\\mongo-statefulset.yaml
+//                 kubectl apply -f k8s\\backend-deployment.yaml
+//                 kubectl apply -f k8s\\frontend-deployment.yaml
+//                 kubectl apply -f k8s\\ingress.yaml
+
+//                 echo Updating deployment images to Docker Hub...
+
+//                 kubectl set image deployment/backend backend=%DH_USER%/restaurant-backend:latest -n restaurant
+//                 kubectl set image deployment/frontend frontend=%DH_USER%/restaurant-frontend:latest -n restaurant
+
+//                 echo Restarting pods so they pull latest images...
+//                 kubectl rollout restart deployment/backend -n restaurant
+//                 kubectl rollout restart deployment/frontend -n restaurant
+
+//                 echo Waiting for rollout...
+//                 kubectl rollout status deployment/backend -n restaurant --timeout=300s
+//                 kubectl rollout status deployment/frontend -n restaurant --timeout=300s
+//             """
+//         }
+//     }
+// }
 
 
     post {
