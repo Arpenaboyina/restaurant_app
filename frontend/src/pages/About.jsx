@@ -20,7 +20,7 @@ export default function About() {
 				<div className="row align-items-center">
 					<div className="col-md-6">
 						<h2 className="mb-4">Our Story</h2>
-						<p className="lead text-muted mb-4">
+						<p className="lead text-white mb-4">
 							Welcome to our restaurant, where culinary excellence meets modern technology. 
 							We've been serving delicious meals for years, and now we're bringing the future 
 							of dining to your table.
@@ -147,4 +147,5 @@ export default function About() {
 		</div>
 	);
 }
+
 
