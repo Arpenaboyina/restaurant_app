@@ -21,8 +21,8 @@ export default function App() {
 						<Link to="/chef" className="nav-link">CHEFS</Link>
 						<Link to="/customer" className="nav-link">MENU</Link>
 						<Link to="/owner" className="nav-link">OWNER</Link>
-						<Link to="/about" className="nav-link">GALLERY</Link>
-						<Link to="/about" className="nav-link">CONTACTS</Link>
+						{/* <Link to="/about" className="nav-link">GALLERY</Link>
+						<Link to="/about" className="nav-link">CONTACTS</Link> */}
 					</nav>
 				</div>
 			</header>
@@ -36,6 +36,7 @@ export default function App() {
 		</>
 	);
 }
+
 
 
 
