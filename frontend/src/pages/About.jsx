@@ -138,7 +138,7 @@ export default function About() {
 								<strong>Saturday:</strong> 10:00 AM - 11:00 PM
 							</p>
 							<p className="text-muted">
-								<strong>Sunday:</strong> 12:00 PM - 9:00 PM
+								<strong>Sunday:</strong> 10:00 AM - 12:00 PM
 							</p>
 						</div>
 					</div>
@@ -147,6 +147,7 @@ export default function About() {
 		</div>
 	);
 }
+
 
 
 
