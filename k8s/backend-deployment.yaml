@@ -1,29 +1,104 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: restaurant
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: backend-config
-  namespace: restaurant
-data:
-  PORT: "4000"
-  MONGO_URI: "mongodb://mongo:27017/restaurant"
-  CLIENT_ORIGIN: "http://localhost:30080"
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: backend-secrets
-  namespace: restaurant
-type: Opaque
-stringData:
-  OWNER_PASSWORD: "change_me_owner_password"
-  OWNER_JWT_SECRET: "owner_secret"
-  TABLE_JWT_SECRET: "table_secret"
----
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: restaurant
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: backend-config
+#   namespace: restaurant
+# data:
+#   PORT: "4000"
+#   MONGO_URI: "mongodb://mongo:27017/restaurant"
+#   CLIENT_ORIGIN: "http://localhost:30080"
+# ---
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: backend-secrets
+#   namespace: restaurant
+# type: Opaque
+# stringData:
+#   OWNER_PASSWORD: "change_me_owner_password"
+#   OWNER_JWT_SECRET: "owner_secret"
+#   TABLE_JWT_SECRET: "table_secret"
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: backend
+#   namespace: restaurant
+# spec:
+#   replicas: 2
+#   selector:
+#     matchLabels:
+#       app: backend
+#   template:
+#     metadata:
+#       labels:
+#         app: backend
+#     spec:
+#       containers:
+#         - name: backend
+#           image: restaurant/backend:latest
+#           imagePullPolicy: Always
+#           ports:
+#             - containerPort: 4000
+#               name: http
+#           envFrom:
+#             - configMapRef:
+#                 name: backend-config
+#             - secretRef:
+#                 name: backend-secrets
+#           livenessProbe:
+#             httpGet:
+#               path: /health
+#               port: 4000
+#             initialDelaySeconds: 30
+#             periodSeconds: 10
+#             timeoutSeconds: 5
+#             failureThreshold: 3
+#           readinessProbe:
+#             httpGet:
+#               path: /health
+#               port: 4000
+#             initialDelaySeconds: 10
+#             periodSeconds: 5
+#             timeoutSeconds: 3
+#             failureThreshold: 3
+#           resources:
+#             requests:
+#               memory: "128Mi"
+#               cpu: "100m"
+#             limits:
+#               memory: "512Mi"
+#               cpu: "500m"
+#           securityContext:
+#             runAsNonRoot: true
+#             runAsUser: 1001
+#             allowPrivilegeEscalation: false
+#             readOnlyRootFilesystem: false
+#             capabilities:
+#               drop:
+#                 - ALL
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: backend
+#   namespace: restaurant
+# spec:
+#   selector:
+#     app: backend
+#   ports:
+#     - port: 4000
+#       targetPort: 4000
+#       nodePort: 30040
+#       protocol: TCP
+#       name: http
+#   type: NodePort
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,8 +116,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: restaurant/backend:latest
-          imagePullPolicy: Always
+          image: arpenaboyina/restaurant-backend:latest   # ✔ FIXED IMAGE NAME
+          imagePullPolicy: Always                         # ✔ ALWAYS PULL LATEST
           ports:
             - containerPort: 4000
               name: http
@@ -82,22 +157,6 @@ spec:
             capabilities:
               drop:
                 - ALL
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend
-  namespace: restaurant
-spec:
-  selector:
-    app: backend
-  ports:
-    - port: 4000
-      targetPort: 4000
-      nodePort: 30040
-      protocol: TCP
-      name: http
-  type: NodePort
 
 
 
