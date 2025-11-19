@@ -18,7 +18,7 @@ export default function Home() {
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 						</p>
 						<div className="hero-buttons">
-							<Link to="/customer" className="btn-live-demo">Live Demo</Link>
+							{/* <Link to="/customer" className="btn-live-demo">Live Demo</Link> */}
 							<Link to="/customer" className="btn-book-table">BOOK A TABLE</Link>
 						</div>
 					</div>
@@ -278,4 +278,5 @@ export default function Home() {
 		</div>
 	);
 }
+
 
