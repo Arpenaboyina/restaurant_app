@@ -122,11 +122,11 @@ export default function About() {
 							</p>
 							<p className="text-muted mb-3">
 								<strong>📞 Phone:</strong><br />
-								(555) 123-4567
+								9502508859
 							</p>
 							<p className="text-muted">
 								<strong>✉️ Email:</strong><br />
-								info@restaurant.com
+								rakesh@restaurant.com
 							</p>
 						</div>
 						<div className="col-md-6">
@@ -147,6 +147,7 @@ export default function About() {
 		</div>
 	);
 }
+
 
 
 
