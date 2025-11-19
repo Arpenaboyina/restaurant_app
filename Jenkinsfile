@@ -39,8 +39,8 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 bat """
-                    docker build -t ${BACKEND_IMAGE}:latest backend
-                    docker build -t ${FRONTEND_IMAGE}:latest frontend
+                    docker build --no-cache -t ${BACKEND_IMAGE}:latest backend
+                    docker build --no-cache -t ${FRONTEND_IMAGE}:latest frontend
                 """
             }
         }
@@ -119,3 +119,4 @@ pipeline {
         failure { echo "Pipeline failed!" }
     }
 }
+
