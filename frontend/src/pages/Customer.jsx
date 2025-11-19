@@ -161,16 +161,14 @@ export default function Customer() {
     alert("Waiter Notified!");
   }
 
-  /* ---------------- LOGIN PAGE (LIGHT THEME) ---------------- */
+  /* ---------------- LOGIN PAGE ---------------- */
   if (!isAuthed) {
     return (
-      <div className="min-h-screen bg-gray-100 flex justify-center items-center p-6">
-        <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-sm border border-green-500">
-          <h3 className="text-xl font-bold text-center text-green-600 mb-4">
-            Confirm Your Table
-          </h3>
+      <div className="login-container">
+        <div className="login-form">
+          <h3>🍽️ Confirm Your Table</h3>
 
-          <form onSubmit={verify} className="space-y-4">
+          <form onSubmit={verify}>
             <input
               value={tableId}
               onChange={(e) => {
@@ -178,8 +176,8 @@ export default function Customer() {
                 setVerifyError("");
               }}
               placeholder="Table ID"
+              autoComplete="username"
               required
-              className="w-full p-3 border rounded-lg border-gray-300"
             />
 
             <input
@@ -189,17 +187,16 @@ export default function Customer() {
                 setVerifyError("");
               }}
               placeholder="Table Password"
+              type="password"
+              autoComplete="current-password"
               required
-              className="w-full p-3 border rounded-lg border-gray-300"
             />
 
             {verifyError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {verifyError}
-              </div>
+              <p className="error">{verifyError}</p>
             )}
 
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg">
+            <button type="submit">
               Confirm
             </button>
           </form>
@@ -210,66 +207,148 @@ export default function Customer() {
 
   /* ---------------- MAIN UI ---------------- */
   return (
-    <div className="p-4 max-w-6xl mx-auto bg-gray-50 text-gray-900 min-h-screen">
+    <div style={{ 
+      padding: '20px', 
+      maxWidth: '2000px', 
+      margin: '0 auto', 
+      background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
+      color: '#ffffff',
+      minHeight: '100vh'
+    }}>
       
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-green-600">🍽️ Table: {tableName}</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <h2 className="rainbow-gradient" style={{ fontSize: '28px', fontWeight: '800' }}>🍽️ Table: {tableName}</h2>
         <button
           onClick={callWaiter}
-          className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg font-semibold shadow"
+          style={{
+            padding: '12px 24px',
+            background: 'linear-gradient(135deg, #ff006e 0%, #ff6b35 50%, #ffd23f 100%)',
+            color: '#000000',
+            border: 'none',
+            borderRadius: '12px',
+            fontWeight: '700',
+            fontSize: '16px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(255, 0, 110, 0.4)',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 6px 30px rgba(255, 0, 110, 0.6)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 4px 20px rgba(255, 0, 110, 0.4)';
+          }}
         >
           Call Waiter
         </button>
       </div>
 
       {/* ---------------- MENU ---------------- */}
-      <section className="bg-white p-6 rounded-2xl shadow mb-6 border border-gray-200">
-        <h3 className="text-2xl font-bold mb-4 text-green-700">Menu</h3>
+      <section className="card" style={{ marginBottom: '30px' }}>
+        <h3 className="rainbow-gradient" style={{ fontSize: '32px', fontWeight: '800', marginBottom: '20px' }}>Menu</h3>
 
         {/* Search + Filter */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px', marginBottom: '30px' }}>
           <input
             type="text"
             placeholder="Search..."
-            className="p-3 border rounded-lg"
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '16px'
+            }}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
           <select
-            className="p-3 border rounded-lg"
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '16px'
+            }}
             value={vegFilter}
             onChange={(e) => setVegFilter(e.target.value)}
           >
-            <option value="all">All</option>
-            <option value="veg">Veg</option>
-            <option value="nonveg">Non-Veg</option>
+            <option value="all" style={{ background: '#1a1a2e', color: '#ffffff' }}>All</option>
+            <option value="veg" style={{ background: '#1a1a2e', color: '#ffffff' }}>Veg</option>
+            <option value="nonveg" style={{ background: '#1a1a2e', color: '#ffffff' }}>Non-Veg</option>
           </select>
         </div>
 
         {/* Menu Items */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
           {filteredMenu.map((i) => (
-            <div key={i._id} className="p-4 bg-gray-100 rounded-xl border shadow-sm">
-              <h4 className="text-lg font-bold mb-1">{i.name}</h4>
+            <div key={i._id} style={{
+              padding: '20px',
+              background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+              borderRadius: '16px',
+              border: '2px solid',
+              borderImage: 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(168, 85, 247, 0.3)) 1',
+              boxShadow: '0 8px 32px rgba(255, 0, 110, 0.2)'
+            }}>
+              <h4 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '10px', color: '#ffffff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{i.name}</h4>
 
-              <div className="flex gap-2 mb-2">
-                <span className="px-2 py-1 text-xs bg-gray-200 rounded">{i.category}</span>
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
+                <span style={{
+                  padding: '4px 12px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '20px',
+                  fontSize: '12px',
+                  color: '#e0e0e0',
+                  border: '1px solid rgba(255, 0, 110, 0.3)'
+                }}>{i.category}</span>
                 <span
-                  className={`px-2 py-1 text-xs rounded ${
-                    i.isVeg ? "bg-green-200 text-green-700" : "bg-red-200 text-red-700"
-                  }`}
+                  style={{
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    background: i.isVeg 
+                      ? 'linear-gradient(135deg, rgba(6, 255, 165, 0.3), rgba(78, 205, 196, 0.3))'
+                      : 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(255, 107, 53, 0.3))',
+                    color: '#ffffff',
+                    border: `1px solid ${i.isVeg ? 'rgba(6, 255, 165, 0.5)' : 'rgba(255, 0, 110, 0.5)'}`
+                  }}
                 >
                   {i.isVeg ? "Veg" : "Non-Veg"}
                 </span>
               </div>
 
-              <p className="font-semibold text-green-600">₹{i.price}</p>
+              <p style={{ fontSize: '24px', fontWeight: '700', marginBottom: '15px', background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>₹{i.price}</p>
 
               <button
                 onClick={() => addToCart(i)}
-                className="mt-3 w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'linear-gradient(135deg, #ff006e 0%, #ff6b35 50%, #ffd23f 100%)',
+                  color: '#000000',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: '700',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 20px rgba(255, 0, 110, 0.4)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 6px 30px rgba(255, 0, 110, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 20px rgba(255, 0, 110, 0.4)';
+                }}
               >
                 Add to Cart
               </button>
@@ -279,55 +358,140 @@ export default function Customer() {
       </section>
 
       {/* ---------------- CART ---------------- */}
-      <section className="bg-white p-6 rounded-2xl shadow mb-6 border border-gray-200">
-        <h3 className="text-2xl font-bold mb-4 text-blue-700">Cart</h3>
+      <section className="card" style={{ marginBottom: '30px' }}>
+        <h3 className="rainbow-gradient" style={{ fontSize: '32px', fontWeight: '800', marginBottom: '20px' }}>Cart</h3>
 
         {cart.length === 0 ? (
-          <p className="text-gray-500">Your cart is empty.</p>
+          <p style={{ color: '#e0e0e0', fontSize: '18px', textAlign: 'center', padding: '40px' }}>Your cart is empty.</p>
         ) : (
           <>
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' }}>
               {cart.map((c, idx) => (
-                <div key={c.menuItemId} className="p-4 bg-gray-100 rounded-xl border flex justify-between">
+                <div key={c.menuItemId} style={{
+                  padding: '20px',
+                  background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.6) 0%, rgba(22, 33, 62, 0.6) 100%)',
+                  borderRadius: '16px',
+                  border: '2px solid rgba(255, 0, 110, 0.3)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '20px'
+                }}>
                   
-                  <div className="w-2/3">
-                    <h4 className="font-bold">{c.name}</h4>
-                    <p className="text-green-600">₹{c.price}</p>
+                  <div style={{ flex: '2' }}>
+                    <h4 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px', color: '#ffffff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{c.name}</h4>
+                    <p style={{ fontSize: '18px', fontWeight: '600', marginBottom: '12px', background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>₹{c.price}</p>
 
                     <input
-                      className="mt-2 p-2 border rounded w-full"
+                      style={{
+                        width: '100%',
+                        padding: '10px 14px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '2px solid rgba(255, 0, 110, 0.3)',
+                        borderRadius: '10px',
+                        color: '#ffffff',
+                        fontSize: '14px'
+                      }}
                       placeholder="Customizations"
                       value={c.customizations}
                       onChange={(e) => updateCustomization(idx, e.target.value)}
                     />
                   </div>
 
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <button onClick={() => changeQty(idx, -1)} className="px-3 py-1 bg-gray-300 rounded">-</button>
-                    <span>{c.quantity}</span>
-                    <button onClick={() => changeQty(idx, 1)} className="px-3 py-1 bg-gray-300 rounded">+</button>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                    <button 
+                      onClick={() => changeQty(idx, -1)} 
+                      style={{
+                        padding: '8px 16px',
+                        background: 'linear-gradient(135deg, #5e72e4, #a855f7)',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        minWidth: '40px'
+                      }}
+                    >-</button>
+                    <span style={{ fontSize: '20px', fontWeight: '700', color: '#ffffff', minWidth: '30px', textAlign: 'center' }}>{c.quantity}</span>
+                    <button 
+                      onClick={() => changeQty(idx, 1)} 
+                      style={{
+                        padding: '8px 16px',
+                        background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)',
+                        color: '#000000',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        minWidth: '40px'
+                      }}
+                    >+</button>
 
-                    <button onClick={() => removeItem(idx)} className="text-red-500 text-xl">✕</button>
+                    <button 
+                      onClick={() => removeItem(idx)} 
+                      style={{
+                        color: '#ff006e',
+                        fontSize: '24px',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontWeight: '700'
+                      }}
+                    >✕</button>
                   </div>
 
                 </div>
               ))}
             </div>
 
-            <p className="mt-4 text-xl font-bold text-green-600">
+            <p style={{ marginTop: '20px', fontSize: '28px', fontWeight: '800', background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '20px' }}>
               Total: ₹{total.toFixed(2)}
             </p>
 
-            <div className="mt-4 flex gap-3">
+            <div style={{ marginTop: '20px', display: 'flex', gap: '15px' }}>
               <button
                 onClick={() => setShowSummary(true)}
-                className="px-4 py-2 bg-gray-300 rounded"
+                style={{
+                  padding: '12px 24px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '2px solid rgba(255, 0, 110, 0.5)',
+                  borderRadius: '12px',
+                  color: '#ffffff',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(255, 0, 110, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
               >
                 Review
               </button>
               <button
                 onClick={placeOrder}
-                className="px-4 py-2 bg-green-600 text-white rounded"
+                style={{
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #ff006e 0%, #ff6b35 50%, #ffd23f 100%)',
+                  color: '#000000',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: '700',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 20px rgba(255, 0, 110, 0.4)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 6px 30px rgba(255, 0, 110, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 20px rgba(255, 0, 110, 0.4)';
+                }}
               >
                 Place Order
               </button>
@@ -338,28 +502,94 @@ export default function Customer() {
 
       {/* ---------------- ORDER SUMMARY ---------------- */}
       {showSummary && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4">
-          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-lg relative border border-green-400">
-            <button onClick={() => setShowSummary(false)} className="absolute right-4 top-4 text-xl text-red-500">✕</button>
+        <div style={{
+          position: 'fixed',
+          inset: '0',
+          background: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '20px',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%)',
+            padding: '30px',
+            borderRadius: '24px',
+            boxShadow: '0 20px 60px rgba(255, 0, 110, 0.4)',
+            width: '100%',
+            maxWidth: '500px',
+            position: 'relative',
+            border: '3px solid',
+            borderImage: 'linear-gradient(135deg, #ff006e, #ff6b35, #ffd23f, #06ffa5, #4ecdc4, #5e72e4, #a855f7) 1'
+          }}>
+            <button 
+              onClick={() => setShowSummary(false)} 
+              style={{
+                position: 'absolute',
+                right: '15px',
+                top: '15px',
+                fontSize: '28px',
+                color: '#ff006e',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: '700'
+              }}
+            >✕</button>
 
-            <h3 className="text-2xl font-bold mb-4 text-green-700">Order Summary</h3>
+            <h3 className="rainbow-gradient" style={{ fontSize: '28px', fontWeight: '800', marginBottom: '20px' }}>Order Summary</h3>
 
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
               {cart.map((c) => (
-                <div key={c.menuItemId} className="flex justify-between border-b pb-2">
-                  <span>{c.name} x{c.quantity}</span>
-                  <span className="text-green-600">₹{(c.quantity * c.price).toFixed(2)}</span>
+                <div key={c.menuItemId} style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  paddingBottom: '12px',
+                  borderBottom: '2px solid rgba(255, 0, 110, 0.2)'
+                }}>
+                  <span style={{ color: '#ffffff', fontSize: '16px', fontWeight: '600' }}>{c.name} x{c.quantity}</span>
+                  <span style={{ background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '16px', fontWeight: '700' }}>₹{(c.quantity * c.price).toFixed(2)}</span>
                 </div>
               ))}
             </div>
 
-            <p className="mt-4 text-xl font-bold text-green-700">
+            <p style={{
+              marginTop: '20px',
+              fontSize: '24px',
+              fontWeight: '800',
+              background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              marginBottom: '20px'
+            }}>
               Total: ₹{total.toFixed(2)}
             </p>
 
             <button
               onClick={placeOrder}
-              className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white p-3 rounded"
+              style={{
+                width: '100%',
+                marginTop: '20px',
+                padding: '14px',
+                background: 'linear-gradient(135deg, #ff006e 0%, #ff6b35 50%, #ffd23f 100%)',
+                color: '#000000',
+                border: 'none',
+                borderRadius: '12px',
+                fontWeight: '700',
+                fontSize: '18px',
+                cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(255, 0, 110, 0.4)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 30px rgba(255, 0, 110, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 20px rgba(255, 0, 110, 0.4)';
+              }}
             >
               Confirm Order
             </button>
@@ -368,32 +598,50 @@ export default function Customer() {
       )}
 
       {/* ---------------- MY ORDERS ---------------- */}
-      <section className="bg-white p-6 rounded-2xl shadow border border-gray-200">
-        <h3 className="text-2xl font-semibold mb-4 text-purple-700">My Orders</h3>
+      <section className="card">
+        <h3 className="rainbow-gradient" style={{ fontSize: '32px', fontWeight: '800', marginBottom: '20px' }}>My Orders</h3>
 
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' }}>
           {orders.map((o) => (
-            <div key={o._id} className="bg-gray-100 p-4 rounded-xl border">
-              <p className="font-bold">Order #{o._id}</p>
+            <div key={o._id} style={{
+              padding: '20px',
+              background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.6) 0%, rgba(22, 33, 62, 0.6) 100%)',
+              borderRadius: '16px',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              boxShadow: '0 4px 20px rgba(255, 0, 110, 0.2)'
+            }}>
+              <p style={{ fontSize: '18px', fontWeight: '700', marginBottom: '10px', color: '#ffffff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Order #{o._id.slice(-6)}</p>
 
-              <p className="text-sm text-gray-700">
+              <p style={{ fontSize: '14px', color: '#e0e0e0', marginBottom: '15px', lineHeight: '1.6' }}>
                 {o.items
                   .map((i) => `${i.name} x${i.quantity}`)
                   .join(", ")}
               </p>
 
-              <div className="mt-1 flex justify-between">
-                <span className="text-green-600">₹{o.total}</span>
+              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ 
+                  fontSize: '20px', 
+                  fontWeight: '700', 
+                  background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', 
+                  WebkitBackgroundClip: 'text', 
+                  WebkitTextFillColor: 'transparent' 
+                }}>₹{o.total}</span>
 
-                <span className={`px-3 py-1 rounded-lg text-sm text-white ${
-                  o.status === "new"
-                    ? "bg-yellow-500"
+                <span style={{
+                  padding: '6px 16px',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#ffffff',
+                  background: o.status === "new"
+                    ? 'linear-gradient(135deg, #ffd23f, #ff6b35)'
                     : o.status === "preparing"
-                    ? "bg-blue-500"
+                    ? 'linear-gradient(135deg, #4ecdc4, #5e72e4)'
                     : o.status === "ready"
-                    ? "bg-green-600"
-                    : "bg-gray-500"
-                }`}>
+                    ? 'linear-gradient(135deg, #06ffa5, #4ecdc4)'
+                    : 'linear-gradient(135deg, #5e72e4, #a855f7)',
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
+                }}>
                   {statusLabel(o.status)}
                 </span>
               </div>
@@ -405,7 +653,14 @@ export default function Customer() {
           ))}
         </div>
 
-        <p className="mt-4 text-xl font-bold text-green-700">
+        <p style={{
+          marginTop: '20px',
+          fontSize: '24px',
+          fontWeight: '800',
+          background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
           Current bill total: ₹
           {orders
             .filter((o) => o.status !== "cancelled")
@@ -430,7 +685,7 @@ function statusLabel(s) {
   }
 }
 
-/* ---------------- FEEDBACK FORM (LIGHT THEME) ---------------- */
+/* ---------------- FEEDBACK FORM ---------------- */
 function FeedbackForm({ orderId, onSubmit }) {
   const [foodRating, setFoodRating] = useState(5);
   const [serviceRating, setServiceRating] = useState(5);
@@ -438,37 +693,60 @@ function FeedbackForm({ orderId, onSubmit }) {
 
   return (
     <form
-      className="mt-4 p-4 bg-white border rounded-xl shadow"
+      style={{
+        marginTop: '20px',
+        padding: '20px',
+        background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+        border: '2px solid rgba(255, 0, 110, 0.3)',
+        borderRadius: '16px',
+        boxShadow: '0 4px 20px rgba(255, 0, 110, 0.2)'
+      }}
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit(orderId, foodRating, serviceRating, suggestions);
       }}
     >
-      <h4 className="font-bold mb-2 text-green-600">Rate your order</h4>
+      <h4 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '15px', background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Rate your order</h4>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '15px', marginBottom: '15px' }}>
         <div>
-          <label className="text-sm font-medium">Food Rating</label>
+          <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#e0e0e0' }}>Food Rating</label>
           <select
             value={foodRating}
             onChange={(e) => setFoodRating(Number(e.target.value))}
-            className="w-full p-2 border rounded bg-gray-100"
+            style={{
+              width: '100%',
+              padding: '10px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '10px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
           >
             {[1, 2, 3, 4, 5].map((n) => (
-              <option key={n}>{n}</option>
+              <option key={n} style={{ background: '#1a1a2e', color: '#ffffff' }}>{n}</option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="text-sm font-medium">Service Rating</label>
+          <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#e0e0e0' }}>Service Rating</label>
           <select
             value={serviceRating}
             onChange={(e) => setServiceRating(Number(e.target.value))}
-            className="w-full p-2 border rounded bg-gray-100"
+            style={{
+              width: '100%',
+              padding: '10px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '10px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
           >
             {[1, 2, 3, 4, 5].map((n) => (
-              <option key={n}>{n}</option>
+              <option key={n} style={{ background: '#1a1a2e', color: '#ffffff' }}>{n}</option>
             ))}
           </select>
         </div>
@@ -478,10 +756,43 @@ function FeedbackForm({ orderId, onSubmit }) {
         placeholder="Suggestions"
         value={suggestions}
         onChange={(e) => setSuggestions(e.target.value)}
-        className="w-full p-2 border rounded bg-gray-100"
+        style={{
+          width: '100%',
+          padding: '10px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          border: '2px solid rgba(255, 0, 110, 0.3)',
+          borderRadius: '10px',
+          color: '#ffffff',
+          fontSize: '14px',
+          marginBottom: '15px'
+        }}
       />
 
-      <button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+      <button 
+        type="submit"
+        style={{
+          width: '100%',
+          marginTop: '10px',
+          padding: '12px',
+          background: 'linear-gradient(135deg, #5e72e4 0%, #a855f7 100%)',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '12px',
+          fontWeight: '700',
+          fontSize: '16px',
+          cursor: 'pointer',
+          boxShadow: '0 4px 20px rgba(94, 114, 228, 0.4)',
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.transform = 'translateY(-2px)';
+          e.target.style.boxShadow = '0 6px 30px rgba(94, 114, 228, 0.6)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.transform = 'translateY(0)';
+          e.target.style.boxShadow = '0 4px 20px rgba(94, 114, 228, 0.4)';
+        }}
+      >
         Submit
       </button>
     </form>

@@ -10,14 +10,42 @@ dotenv.config();
 
 const app = express();
 
+// CORS configuration - handle all origins and preflight requests
+app.use(cors({
+	origin: function (origin, callback) {
+		// Allow all origins (for development)
+		// In production, you should whitelist specific origins
+		callback(null, true);
+	},
+	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+	allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+	exposedHeaders: ['Content-Type', 'Authorization'],
+	optionsSuccessStatus: 200,
+	preflightContinue: false
+}));
+
+// Additional CORS headers for all responses
+app.use((req, res, next) => {
+	const origin = req.headers.origin;
+	if (origin) {
+		res.header('Access-Control-Allow-Origin', origin);
+	} else {
+		res.header('Access-Control-Allow-Origin', '*');
+	}
+	res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+	res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+	res.header('Access-Control-Allow-Credentials', 'true');
+	
+	// Handle preflight requests explicitly
+	if (req.method === 'OPTIONS') {
+		return res.status(200).end();
+	}
+	next();
+});
+
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(
-	cors({
-		origin: process.env.CLIENT_ORIGIN?.split(',') ?? '*',
-		credentials: true,
-	})
-);
 
 app.get('/health', (_req, res) => {
 	res.json({ status: 'ok' });

@@ -42,7 +42,7 @@ spec:
       containers:
         - name: backend
           image: restaurant/backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 4000
               name: http

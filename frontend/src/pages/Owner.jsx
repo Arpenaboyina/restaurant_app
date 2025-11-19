@@ -1,6 +1,16 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../api";
 import { QRCodeSVG } from "qrcode.react";
+
+/**
+ * Owner.jsx (Light Modern Gradient Theme)
+ * - UI-only improvements (glassmorphism, gradients, softer tables)
+ * - No backend logic changed; all original api calls kept intact
+ * - Tailwind CSS assumed in the project (used for styling)
+ *
+ * Paste this file into your frontend project (e.g., frontend/src/pages/Owner.jsx)
+ */
 
 export default function Owner() {
   const [token, setToken] = useState("");
@@ -109,10 +119,7 @@ export default function Owner() {
     const priceStr = window.prompt("Price", String(item.price));
     if (priceStr == null) return;
 
-    const category = window.prompt(
-      "Category",
-      item.category
-    );
+    const category = window.prompt("Category", item.category);
     if (category == null) return;
 
     const tags = window.prompt(
@@ -195,27 +202,33 @@ export default function Owner() {
 
   if (!isAuthed) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-100 p-4">
-        <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm">
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            Owner Login
-          </h2>
+      <div className="login-container">
+        <div className="login-form">
+          <h2>🔐 Owner Login</h2>
 
-          <form onSubmit={login} className="space-y-4">
+          <form onSubmit={login}>
+            <input
+              type="text"
+              name="username"
+              autoComplete="username"
+              style={{ display: 'none' }}
+              tabIndex={-1}
+              aria-hidden="true"
+            />
             <input
               value={password}
               type="password"
               placeholder="Owner password"
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border p-3 rounded-lg"
-              autoComplete="new-password"
+              autoComplete="current-password"
+              required
             />
 
             {loginError && (
-              <p className="text-red-500 text-center">{loginError}</p>
+              <p className="error">{loginError}</p>
             )}
 
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg shadow">
+            <button type="submit">
               Login
             </button>
           </form>
@@ -227,97 +240,392 @@ export default function Owner() {
   /* -------------------------------------------------- AUTHED UI -------------------------------------------------- */
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div style={{
+      padding: '20px',
+      maxWidth: '2000px',
+      margin: '0 auto',
+      background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
+      color: '#ffffff',
+      minHeight: '100vh'
+    }}>
 
-      <h2 className="text-3xl font-bold mb-6">📊 Owner Dashboard</h2>
+      <header style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+        marginBottom: '40px',
+        padding: '20px',
+        background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+        borderRadius: '20px',
+        border: '2px solid',
+        borderImage: 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(168, 85, 247, 0.3)) 1',
+        boxShadow: '0 8px 32px rgba(255, 0, 110, 0.2)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+          <div>
+            <h2 className="rainbow-gradient" style={{ fontSize: '36px', fontWeight: '800', marginBottom: '8px' }}>
+              📊 Owner Dashboard
+            </h2>
+            <p style={{ fontSize: '14px', color: '#e0e0e0' }}>Dark · Modern · Responsive</p>
+          </div>
+
+          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => {
+                setToken("");
+                setPassword("");
+              }}
+              style={{
+                padding: '12px 24px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '2px solid rgba(255, 0, 110, 0.5)',
+                borderRadius: '12px',
+                color: '#ffffff',
+                fontWeight: '700',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(255, 0, 110, 0.2)';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
+              Logout
+            </button>
+
+            <button
+              onClick={refreshAll}
+              style={{
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #5e72e4 0%, #a855f7 100%)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '12px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(94, 114, 228, 0.4)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 30px rgba(94, 114, 228, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 20px rgba(94, 114, 228, 0.4)';
+              }}
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+      </header>
 
       {/* ---------------- MENU MANAGEMENT ---------------- */}
-      <section className="bg-white p-6 rounded-2xl shadow-lg mb-8">
-        <h3 className="text-2xl font-semibold mb-4">Menu Management</h3>
+      <section className="card" style={{ marginBottom: '30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '15px' }}>
+          <h3 className="rainbow-gradient" style={{ fontSize: '28px', fontWeight: '800' }}>Menu Management</h3>
+          <p style={{ fontSize: '14px', color: '#e0e0e0' }}>Add, edit or remove menu items</p>
+        </div>
 
         <form
           onSubmit={addMenu}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '15px',
+            marginBottom: '30px'
+          }}
         >
-          <input className="border p-3 rounded-lg" name="name" placeholder="Item name" required />
+          <input 
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
+            name="name" 
+            placeholder="Item name" 
+            required 
+          />
 
-          <input className="border p-3 rounded-lg" name="price" placeholder="Price" type="number" required />
+          <input 
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
+            name="price" 
+            placeholder="Price" 
+            type="number" 
+            required 
+          />
 
-          <select name="category" className="border p-3 rounded-lg">
-            <option>Starter</option>
-            <option>Main</option>
-            <option>Drinks</option>
-            <option>Dessert</option>
+          <select 
+            name="category" 
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
+          >
+            <option value="Starter" style={{ background: '#1a1a2e', color: '#ffffff' }}>Starter</option>
+            <option value="Main" style={{ background: '#1a1a2e', color: '#ffffff' }}>Main</option>
+            <option value="Drinks" style={{ background: '#1a1a2e', color: '#ffffff' }}>Drinks</option>
+            <option value="Dessert" style={{ background: '#1a1a2e', color: '#ffffff' }}>Dessert</option>
           </select>
 
-          <input name="imageUrl" className="border p-3 rounded-lg" placeholder="Image URL" />
+          <input 
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
+            name="imageUrl" 
+            placeholder="Image URL (optional)" 
+          />
 
-          <input name="tags" className="border p-3 rounded-lg" placeholder="Tags (comma separated)" />
+          <input 
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
+            name="tags" 
+            placeholder="Tags (comma separated)" 
+          />
 
-          <input name="stock" className="border p-3 rounded-lg" placeholder="Stock" type="number" />
+          <input 
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
+            name="stock" 
+            placeholder="Stock" 
+            type="number" 
+          />
 
-          <input name="discountLabel" className="border p-3 rounded-lg" placeholder="Discount label" />
+          <input 
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
+            name="discountLabel" 
+            placeholder="Discount label" 
+          />
 
-          <input name="popularity" className="border p-3 rounded-lg" placeholder="Popularity (0-100)" type="number" />
+          <input 
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
+            name="popularity" 
+            placeholder="Popularity (0-100)" 
+            type="number" 
+          />
 
           <input
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
             name="customizationOptions"
-            className="border p-3 rounded-lg"
             placeholder="Customization options"
           />
 
-          <label className="flex items-center gap-2">
-            <input name="available" type="checkbox" defaultChecked />
-            Available
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', gridColumn: 'span 1' }}>
+            <input 
+              name="available" 
+              type="checkbox" 
+              defaultChecked 
+              style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+            />
+            <span style={{ fontSize: '14px', color: '#e0e0e0', fontWeight: '600' }}>Available</span>
           </label>
 
-          <button className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg shadow w-full col-span-full">
+          <button 
+            type="submit"
+            style={{
+              gridColumn: '1 / -1',
+              padding: '14px',
+              background: 'linear-gradient(135deg, #06ffa5 0%, #4ecdc4 100%)',
+              color: '#000000',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: '700',
+              fontSize: '16px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(6, 255, 165, 0.4)',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 30px rgba(6, 255, 165, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 20px rgba(6, 255, 165, 0.4)';
+            }}
+          >
             Add Item
           </button>
         </form>
 
         {/* Menu Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border">
-            <thead className="bg-gray-200">
+        <div style={{ overflowX: 'auto', borderRadius: '12px', border: '2px solid rgba(255, 0, 110, 0.3)', boxShadow: '0 4px 20px rgba(255, 0, 110, 0.2)' }}>
+          <table style={{ width: '100%', minWidth: '700px', borderCollapse: 'collapse' }}>
+            <thead style={{ background: 'linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(168, 85, 247, 0.2))' }}>
               <tr>
-                <th className="p-2 text-left">Name</th>
-                <th className="p-2">Price</th>
-                <th className="p-2">Category</th>
-                <th className="p-2">Tags</th>
-                <th className="p-2">Availability</th>
-                <th className="p-2">Actions</th>
+                <th style={{ padding: '12px', textAlign: 'left', color: '#ffffff', fontWeight: '700' }}>Name</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Price</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Category</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Tags</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Availability</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {menu.map((i) => (
-                <tr key={i._id} className="border-b">
-                  <td className="p-2">{i.name}</td>
-                  <td className="p-2">₹{Number(i.price).toFixed(2)}</td>
-                  <td className="p-2">{i.category}</td>
-                  <td className="p-2">{(i.tags || []).join(", ")}</td>
-                  <td className="p-2">{i.available ? "Yes" : "No"}</td>
+                <tr key={i._id} style={{ borderBottom: '2px solid rgba(255, 0, 110, 0.2)' }}>
+                  <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {i.imageUrl ? (
+                      <img src={i.imageUrl} alt={i.name} style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }} />
+                    ) : (
+                      <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(168, 85, 247, 0.3))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
+                        🍽️
+                      </div>
+                    )}
+                    <div>
+                      <div style={{ fontWeight: '700', color: '#ffffff', fontSize: '16px' }}>{i.name}</div>
+                      <div style={{ fontSize: '12px', color: '#e0e0e0' }}>{i.discountLabel || ""}</div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '12px', color: '#ffffff', fontSize: '16px' }}>₹{Number(i.price).toFixed(2)}</td>
+                  <td style={{ padding: '12px', color: '#e0e0e0', fontSize: '14px' }}>{i.category}</td>
+                  <td style={{ padding: '12px', color: '#e0e0e0', fontSize: '14px' }}>{(i.tags || []).join(", ")}</td>
+                  <td style={{ padding: '12px' }}>
+                    <span style={{
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      background: i.available 
+                        ? 'linear-gradient(135deg, rgba(6, 255, 165, 0.3), rgba(78, 205, 196, 0.3))'
+                        : 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(255, 107, 53, 0.3))',
+                      color: '#ffffff',
+                      border: `1px solid ${i.available ? 'rgba(6, 255, 165, 0.5)' : 'rgba(255, 0, 110, 0.5)'}`
+                    }}>
+                      {i.available ? "Yes" : "No"}
+                    </span>
+                  </td>
 
-                  <td className="p-2 flex gap-2">
+                  <td style={{ padding: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <button
-                      className="px-3 py-1 bg-yellow-500 text-white rounded"
-                      onClick={() =>
-                        updateMenu(i._id, { available: !i.available })
-                      }
+                      style={{
+                        padding: '6px 12px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '2px solid rgba(255, 210, 63, 0.5)',
+                        borderRadius: '8px',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(255, 210, 63, 0.2)';
+                        e.target.style.transform = 'scale(1.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                        e.target.style.transform = 'scale(1)';
+                      }}
+                      onClick={() => updateMenu(i._id, { available: !i.available })}
                     >
                       {i.available ? "Disable" : "Enable"}
                     </button>
 
                     <button
-                      className="px-3 py-1 bg-blue-500 text-white rounded"
+                      style={{
+                        padding: '6px 12px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '2px solid rgba(78, 205, 196, 0.5)',
+                        borderRadius: '8px',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(78, 205, 196, 0.2)';
+                        e.target.style.transform = 'scale(1.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                        e.target.style.transform = 'scale(1)';
+                      }}
                       onClick={() => editItem(i)}
                     >
                       Edit
                     </button>
 
                     <button
-                      className="px-3 py-1 bg-red-500 text-white rounded"
+                      style={{
+                        padding: '6px 12px',
+                        background: 'linear-gradient(135deg, #ff006e, #ff6b35)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(255, 0, 110, 0.4)',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.opacity = '0.9';
+                        e.target.style.transform = 'scale(1.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.opacity = '1';
+                        e.target.style.transform = 'scale(1)';
+                      }}
                       onClick={() => deleteMenu(i._id)}
                     >
                       Delete
@@ -332,33 +640,34 @@ export default function Owner() {
       </section>
 
       {/* ---------------- FEEDBACK ---------------- */}
-      <section className="bg-white p-6 rounded-2xl shadow-lg mb-8">
-        <h3 className="text-2xl font-semibold mb-4">Customer Feedback</h3>
+      <section className="card" style={{ marginBottom: '30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
+          <h3 className="rainbow-gradient" style={{ fontSize: '28px', fontWeight: '800' }}>Customer Feedback</h3>
+          <p style={{ fontSize: '14px', color: '#e0e0e0' }}>Recent feedback & suggestions</p>
+        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border">
-            <thead className="bg-gray-200">
+        <div style={{ overflowX: 'auto', borderRadius: '12px', border: '2px solid rgba(255, 0, 110, 0.3)', boxShadow: '0 4px 20px rgba(255, 0, 110, 0.2)' }}>
+          <table style={{ width: '100%', minWidth: '700px', borderCollapse: 'collapse' }}>
+            <thead style={{ background: 'linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(168, 85, 247, 0.2))' }}>
               <tr>
-                <th className="p-2">Date</th>
-                <th className="p-2">Order</th>
-                <th className="p-2">Table</th>
-                <th className="p-2">Food</th>
-                <th className="p-2">Service</th>
-                <th className="p-2">Suggestions</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Date</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Order</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Table</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Food</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Service</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Suggestions</th>
               </tr>
             </thead>
 
             <tbody>
               {feedback.map((f) => (
-                <tr key={f._id} className="border-b">
-                  <td className="p-2">
-                    {new Date(f.createdAt).toLocaleString()}
-                  </td>
-                  <td className="p-2">{f.orderId}</td>
-                  <td className="p-2">{f.tableId}</td>
-                  <td className="p-2">{f.foodRating}</td>
-                  <td className="p-2">{f.serviceRating}</td>
-                  <td className="p-2">{f.suggestions}</td>
+                <tr key={f._id} style={{ borderBottom: '2px solid rgba(255, 0, 110, 0.2)' }}>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#e0e0e0' }}>{new Date(f.createdAt).toLocaleString()}</td>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#e0e0e0' }}>{f.orderId}</td>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#e0e0e0' }}>{f.tableId}</td>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#ffffff', fontWeight: '600' }}>{f.foodRating}</td>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#ffffff', fontWeight: '600' }}>{f.serviceRating}</td>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#e0e0e0' }}>{f.suggestions}</td>
                 </tr>
               ))}
             </tbody>
@@ -367,90 +676,218 @@ export default function Owner() {
       </section>
 
       {/* ---------------- ANALYTICS ---------------- */}
-      <section className="bg-white p-6 rounded-2xl shadow-lg mb-8">
-        <h3 className="text-2xl font-semibold mb-4">Analytics</h3>
+      <section className="card" style={{ marginBottom: '30px' }}>
+        <h3 className="rainbow-gradient" style={{ fontSize: '28px', fontWeight: '800', marginBottom: '20px' }}>Analytics</h3>
         <Analytics token={token} />
       </section>
 
       {/* ---------------- TABLE MANAGEMENT ---------------- */}
-      <section className="bg-white p-6 rounded-2xl shadow-lg mb-8">
-        <h3 className="text-2xl font-semibold mb-4">Tables</h3>
+      <section className="card" style={{ marginBottom: '30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
+          <h3 className="rainbow-gradient" style={{ fontSize: '28px', fontWeight: '800' }}>Tables</h3>
+          <p style={{ fontSize: '14px', color: '#e0e0e0' }}>Create tables and share QR codes</p>
+        </div>
 
-        <p className="text-sm mb-3">
-          QR URL format: <b>{window.location.origin}/?table=&lt;tableId&gt;</b>
+        <p style={{ fontSize: '14px', marginBottom: '20px', color: '#e0e0e0' }}>
+          QR URL format: <b style={{ color: '#ffffff' }}>{window.location.origin}/customer?table=&lt;tableId&gt;</b>
         </p>
 
         {/* Add Table Form */}
         <form
           onSubmit={addTable}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '15px',
+            marginBottom: '30px'
+          }}
         >
           <input
             name="tableId"
-            className="border p-3 rounded-lg"
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
             placeholder="Table ID"
             required
           />
           <input
             name="tablePassword"
-            className="border p-3 rounded-lg"
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2px solid rgba(255, 0, 110, 0.3)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              fontSize: '14px'
+            }}
             placeholder="Table Password"
             required
           />
 
-          <button className="bg-green-600 text-white p-3 rounded-lg col-span-full">
+          <button 
+            type="submit"
+            style={{
+              gridColumn: '1 / -1',
+              padding: '14px',
+              background: 'linear-gradient(135deg, #06ffa5 0%, #4ecdc4 100%)',
+              color: '#000000',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: '700',
+              fontSize: '16px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(6, 255, 165, 0.4)',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 30px rgba(6, 255, 165, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 20px rgba(6, 255, 165, 0.4)';
+            }}
+          >
             Create Table
           </button>
         </form>
 
         {/* Tables List with QR Codes */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
           {tables.map((t) => {
             const qrUrl = `${window.location.origin}/customer?table=${t.tableId}`;
             return (
-              <div key={t.tableId} className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-xl shadow-lg border-2 border-blue-200">
-                <div className="text-center mb-4">
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">Table {t.tableId}</h4>
-                  <div className="bg-white p-4 rounded-lg inline-block shadow-md">
-                    <QRCodeSVG 
-                      value={qrUrl} 
-                      size={180}
+              <div key={t.tableId} style={{
+                padding: '24px',
+                background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+                borderRadius: '20px',
+                boxShadow: '0 8px 32px rgba(255, 0, 110, 0.3)',
+                border: '2px solid',
+                borderImage: 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(168, 85, 247, 0.3)) 1',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(255, 0, 110, 0.5)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(255, 0, 110, 0.3)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+              >
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                  <h4 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '15px', color: '#ffffff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Table {t.tableId}</h4>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.95)', padding: '16px', borderRadius: '12px', display: 'inline-block', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+                    <QRCodeSVG
+                      value={qrUrl}
+                      size={160}
                       level="H"
                       includeMargin={true}
                     />
                   </div>
                 </div>
-                <div className="space-y-2 mb-4">
-                  <p className="text-sm text-gray-600">
-                    <strong>Password:</strong> <span className="font-mono bg-gray-100 px-2 py-1 rounded">{t.tablePassword}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+                  <p style={{ fontSize: '14px', color: '#e0e0e0' }}>
+                    <strong style={{ color: '#ffffff' }}>Password:</strong> <span style={{ fontFamily: 'monospace', background: 'rgba(255, 255, 255, 0.1)', padding: '4px 8px', borderRadius: '6px', color: '#ffffff' }}>{t.tablePassword}</span>
                   </p>
-                  <p className="text-sm">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      t.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                  <p style={{ fontSize: '14px' }}>
+                    <span style={{
+                      padding: '6px 16px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      color: '#ffffff',
+                      background: t.active 
+                        ? 'linear-gradient(135deg, rgba(6, 255, 165, 0.3), rgba(78, 205, 196, 0.3))'
+                        : 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(255, 107, 53, 0.3))',
+                      border: `1px solid ${t.active ? 'rgba(6, 255, 165, 0.5)' : 'rgba(255, 0, 110, 0.5)'}`
+                    }}>
                       {t.active ? '✓ Active' : '✗ Inactive'}
                     </span>
                   </p>
-                  <p className="text-xs text-gray-500 break-all">
-                    <strong>URL:</strong> {qrUrl}
+                  <p style={{ fontSize: '12px', color: '#e0e0e0', wordBreak: 'break-all' }}>
+                    <strong style={{ color: '#ffffff' }}>URL:</strong> {qrUrl}
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
                   <button
-                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-semibold"
+                    style={{
+                      flex: '1',
+                      padding: '10px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '2px solid rgba(78, 205, 196, 0.5)',
+                      borderRadius: '10px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = 'rgba(78, 205, 196, 0.2)';
+                      e.target.style.transform = 'scale(1.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                      e.target.style.transform = 'scale(1)';
+                    }}
                     onClick={() => updateTable(t.tableId, { active: !t.active })}
                   >
                     {t.active ? "Deactivate" : "Activate"}
                   </button>
                   <button
-                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-semibold"
+                    style={{
+                      flex: '1',
+                      padding: '10px',
+                      background: 'linear-gradient(135deg, #ff006e, #ff6b35)',
+                      border: 'none',
+                      borderRadius: '10px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px rgba(255, 0, 110, 0.4)',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.opacity = '0.9';
+                      e.target.style.transform = 'scale(1.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.opacity = '1';
+                      e.target.style.transform = 'scale(1)';
+                    }}
                     onClick={() => deleteTable(t.tableId)}
                   >
                     Delete
                   </button>
                 </div>
                 <button
-                  className="w-full mt-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-semibold"
+                  style={{
+                    width: '100%',
+                    marginTop: '10px',
+                    padding: '12px',
+                    background: 'linear-gradient(135deg, #5e72e4 0%, #a855f7 100%)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 20px rgba(94, 114, 228, 0.4)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 30px rgba(94, 114, 228, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 20px rgba(94, 114, 228, 0.4)';
+                  }}
                   onClick={() => {
                     const link = document.createElement('a');
                     link.href = qrUrl;
@@ -467,88 +904,179 @@ export default function Owner() {
       </section>
 
       {/* ---------------- ORDERS SECTION ---------------- */}
-      <section className="bg-white p-6 rounded-2xl shadow-lg mb-8">
-        <h3 className="text-2xl font-semibold mb-4">Orders</h3>
+      <section className="card" style={{ marginBottom: '30px' }}>
+        <h3 className="rainbow-gradient" style={{ fontSize: '28px', fontWeight: '800', marginBottom: '20px' }}>Orders</h3>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border">
-            <thead className="bg-gray-200">
+        <div style={{ overflowX: 'auto', borderRadius: '12px', border: '2px solid rgba(255, 0, 110, 0.3)', boxShadow: '0 4px 20px rgba(255, 0, 110, 0.2)' }}>
+          <table style={{ width: '100%', minWidth: '900px', borderCollapse: 'collapse' }}>
+            <thead style={{ background: 'linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(168, 85, 247, 0.2))' }}>
               <tr>
-                <th className="p-2">ID</th>
-                <th className="p-2">Table</th>
-                <th className="p-2">Items</th>
-                <th className="p-2">Notes</th>
-                <th className="p-2">Total</th>
-                <th className="p-2">Status</th>
-                <th className="p-2">Actions</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>ID</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Table</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Items</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Notes</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Total</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Status</th>
+                <th style={{ padding: '12px', color: '#ffffff', fontWeight: '700' }}>Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {orders.map((o) => (
-                <tr key={o._id} className="border-b">
-                  <td className="p-2">{o._id}</td>
-                  <td className="p-2">{o.tableId}</td>
-                  <td className="p-2">
+                <tr 
+                  key={o._id} 
+                  style={{ 
+                    borderBottom: '2px solid rgba(255, 0, 110, 0.2)',
+                    background: 'rgba(26, 26, 46, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 0, 110, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(26, 26, 46, 0.3)';
+                  }}
+                >
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#e0e0e0' }}>{o._id.slice(-8)}</td>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#ffffff', fontWeight: '600' }}>{o.tableId}</td>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#e0e0e0' }}>
                     {o.items
                       .map(
                         (i) =>
                           `${i.name} x${i.quantity}${
-                            i.customizations
-                              ? ` (${i.customizations})`
-                              : ""
+                            i.customizations ? ` (${i.customizations})` : ""
                           }`
                       )
                       .join(", ")}
                   </td>
-                  <td className="p-2">{o.notes || "-"}</td>
-                  <td className="p-2">₹{Number(o.total).toFixed(2)}</td>
+                  <td style={{ padding: '12px', fontSize: '14px', color: '#e0e0e0' }}>{o.notes || "-"}</td>
+                  <td style={{ padding: '12px', fontSize: '16px', fontWeight: '700', background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>₹{Number(o.total).toFixed(2)}</td>
 
-                  <td className="p-2">
+                  <td style={{ padding: '12px' }}>
                     <span
-                      className={`px-2 py-1 rounded text-white ${
-                        o.status === "new"
-                          ? "bg-yellow-500"
+                      style={{
+                        padding: '6px 16px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        color: '#ffffff',
+                        background: o.status === "new"
+                          ? 'linear-gradient(135deg, #ffd23f, #ff6b35)'
                           : o.status === "preparing"
-                          ? "bg-blue-500"
+                          ? 'linear-gradient(135deg, #4ecdc4, #5e72e4)'
                           : o.status === "ready"
-                          ? "bg-green-500"
+                          ? 'linear-gradient(135deg, #06ffa5, #4ecdc4)'
                           : o.status === "served"
-                          ? "bg-gray-500"
-                          : "bg-red-500"
-                      }`}
+                          ? 'linear-gradient(135deg, #5e72e4, #a855f7)'
+                          : 'linear-gradient(135deg, #ff006e, #ff6b35)',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
+                      }}
                     >
                       {o.status}
                     </span>
                   </td>
 
-                  <td className="p-2 flex flex-wrap gap-2">
+                  <td style={{ padding: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     {["new", "preparing", "ready"].includes(o.status) && (
                       <>
                         <button
                           onClick={() => updateStatus(o._id, "preparing")}
-                          className="px-3 py-1 bg-blue-500 text-white rounded"
+                          style={{
+                            padding: '6px 12px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '2px solid rgba(78, 205, 196, 0.5)',
+                            borderRadius: '8px',
+                            color: '#ffffff',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.background = 'rgba(78, 205, 196, 0.2)';
+                            e.target.style.transform = 'scale(1.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                            e.target.style.transform = 'scale(1)';
+                          }}
                         >
                           Preparing
                         </button>
 
                         <button
                           onClick={() => updateStatus(o._id, "ready")}
-                          className="px-3 py-1 bg-green-500 text-white rounded"
+                          style={{
+                            padding: '6px 12px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '2px solid rgba(6, 255, 165, 0.5)',
+                            borderRadius: '8px',
+                            color: '#ffffff',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.background = 'rgba(6, 255, 165, 0.2)';
+                            e.target.style.transform = 'scale(1.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                            e.target.style.transform = 'scale(1)';
+                          }}
                         >
                           Ready
                         </button>
 
                         <button
                           onClick={() => updateStatus(o._id, "served")}
-                          className="px-3 py-1 bg-gray-600 text-white rounded"
+                          style={{
+                            padding: '6px 12px',
+                            background: 'linear-gradient(135deg, #5e72e4, #a855f7)',
+                            border: 'none',
+                            borderRadius: '8px',
+                            color: '#ffffff',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 8px rgba(94, 114, 228, 0.4)',
+                            transition: 'all 0.3s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.opacity = '0.9';
+                            e.target.style.transform = 'scale(1.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.opacity = '1';
+                            e.target.style.transform = 'scale(1)';
+                          }}
                         >
                           Served
                         </button>
 
                         <button
                           onClick={() => updateStatus(o._id, "cancelled")}
-                          className="px-3 py-1 bg-red-600 text-white rounded"
+                          style={{
+                            padding: '6px 12px',
+                            background: 'linear-gradient(135deg, #ff006e, #ff6b35)',
+                            border: 'none',
+                            borderRadius: '8px',
+                            color: '#ffffff',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 8px rgba(255, 0, 110, 0.4)',
+                            transition: 'all 0.3s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.opacity = '0.9';
+                            e.target.style.transform = 'scale(1.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.opacity = '1';
+                            e.target.style.transform = 'scale(1)';
+                          }}
                         >
                           Cancel
                         </button>
@@ -587,54 +1115,91 @@ function Analytics({ token }) {
     };
   }, [token]);
 
-  if (!data) return <div>Loading analytics...</div>;
+  if (!data) return <div style={{ color: '#e0e0e0', fontSize: '18px', padding: '20px', textAlign: 'center' }}>Loading analytics...</div>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-      <div className="bg-gray-100 p-4 rounded-xl shadow">
-        <strong>Daily Orders</strong>
-        <div className="text-xl font-bold mt-2">{data.dailyOrders}</div>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+      <div style={{
+        padding: '24px',
+        background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+        borderRadius: '20px',
+        boxShadow: '0 8px 32px rgba(255, 0, 110, 0.2)',
+        border: '2px solid',
+        borderImage: 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(168, 85, 247, 0.3)) 1',
+        textAlign: 'center'
+      }}>
+        <strong style={{ display: 'block', fontSize: '14px', color: '#e0e0e0', marginBottom: '12px', fontWeight: '600' }}>Daily Orders</strong>
+        <div style={{ fontSize: '32px', fontWeight: '800', background: 'linear-gradient(135deg, #ff006e, #ff6b35, #ffd23f)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{data.dailyOrders}</div>
       </div>
 
-      <div className="bg-gray-100 p-4 rounded-xl shadow">
-        <strong>Satisfaction</strong>
-        <div className="text-xl font-bold mt-2">
+      <div style={{
+        padding: '24px',
+        background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+        borderRadius: '20px',
+        boxShadow: '0 8px 32px rgba(255, 0, 110, 0.2)',
+        border: '2px solid',
+        borderImage: 'linear-gradient(135deg, rgba(6, 255, 165, 0.3), rgba(78, 205, 196, 0.3)) 1',
+        textAlign: 'center'
+      }}>
+        <strong style={{ display: 'block', fontSize: '14px', color: '#e0e0e0', marginBottom: '12px', fontWeight: '600' }}>Satisfaction</strong>
+        <div style={{ fontSize: '32px', fontWeight: '800', background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           {data.satisfaction?.toFixed(2) || "N/A"}
         </div>
       </div>
 
-      <div className="bg-gray-100 p-4 rounded-xl shadow">
-        <strong>Avg Prep Time (min)</strong>
-        <div className="text-xl font-bold mt-2">
+      <div style={{
+        padding: '24px',
+        background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+        borderRadius: '20px',
+        boxShadow: '0 8px 32px rgba(255, 0, 110, 0.2)',
+        border: '2px solid',
+        borderImage: 'linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(94, 114, 228, 0.3)) 1',
+        textAlign: 'center'
+      }}>
+        <strong style={{ display: 'block', fontSize: '14px', color: '#e0e0e0', marginBottom: '12px', fontWeight: '600' }}>Avg Prep Time (min)</strong>
+        <div style={{ fontSize: '32px', fontWeight: '800', background: 'linear-gradient(135deg, #4ecdc4, #5e72e4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           {data.avgPrepMinutes?.toFixed(1) || "N/A"}
         </div>
       </div>
 
-      {/* Top Selling */}
-      <div className="bg-gray-100 p-4 rounded-xl shadow md:col-span-2">
-        <strong>Top Selling Items</strong>
-        <ul className="mt-2">
+      <div style={{
+        padding: '24px',
+        background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+        borderRadius: '20px',
+        boxShadow: '0 8px 32px rgba(255, 0, 110, 0.2)',
+        border: '2px solid',
+        borderImage: 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(168, 85, 247, 0.3)) 1',
+        gridColumn: 'span 2'
+      }}>
+        <strong style={{ display: 'block', fontSize: '16px', color: '#ffffff', marginBottom: '15px', fontWeight: '700' }}>Top Selling Items</strong>
+        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {(data.topSelling || []).map((x) => (
-            <li key={x._id}>
-              {x._id} — {x.qty}
+            <li key={x._id} style={{ fontSize: '14px', color: '#e0e0e0', padding: '8px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px' }}>
+              <span style={{ color: '#ffffff', fontWeight: '600' }}>{x._id}</span> — <span style={{ background: 'linear-gradient(135deg, #06ffa5, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: '700' }}>{x.qty}</span>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Least Selling */}
-      <div className="bg-gray-100 p-4 rounded-xl shadow md:col-span-2">
-        <strong>Least Selling Items</strong>
-        <ul className="mt-2">
+      <div style={{
+        padding: '24px',
+        background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+        borderRadius: '20px',
+        boxShadow: '0 8px 32px rgba(255, 0, 110, 0.2)',
+        border: '2px solid',
+        borderImage: 'linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(168, 85, 247, 0.3)) 1',
+        gridColumn: 'span 2'
+      }}>
+        <strong style={{ display: 'block', fontSize: '16px', color: '#ffffff', marginBottom: '15px', fontWeight: '700' }}>Least Selling Items</strong>
+        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {(data.leastSelling || []).map((x) => (
-            <li key={x._id}>
-              {x._id} — {x.qty}
+            <li key={x._id} style={{ fontSize: '14px', color: '#e0e0e0', padding: '8px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px' }}>
+              <span style={{ color: '#ffffff', fontWeight: '600' }}>{x._id}</span> — <span style={{ background: 'linear-gradient(135deg, #ff006e, #ff6b35)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: '700' }}>{x.qty}</span>
             </li>
           ))}
         </ul>
       </div>
-
     </div>
   );
 }
+

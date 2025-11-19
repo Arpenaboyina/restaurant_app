@@ -46,32 +46,38 @@ export default function Chef() {
   // ⛔ Show login page if not authenticated
   if (!isAuthed) {
     return (
-      <section className="max-w-sm mx-auto p-6 mt-20 bg-white shadow-lg rounded-2xl border">
-        <h3 className="text-2xl font-bold mb-4 text-center">Chef Login</h3>
+      <div className="login-container">
+        <div className="login-form">
+          <h3>🍳 Chef Login</h3>
 
-        <form onSubmit={login} className="flex flex-col gap-4">
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Staff password"
-            type="password"
-            autoComplete="new-password"
-            required
-            className="border rounded-lg p-3"
-          />
+          <form onSubmit={login}>
+            <input
+              type="text"
+              name="username"
+              autoComplete="username"
+              style={{ display: 'none' }}
+              tabIndex={-1}
+              aria-hidden="true"
+            />
+            <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Staff password"
+              type="password"
+              autoComplete="current-password"
+              required
+            />
 
-          {Boolean(loginError) && (
-            <p className="text-red-500 text-sm text-center">{loginError}</p>
-          )}
+            {Boolean(loginError) && (
+              <p className="error">{loginError}</p>
+            )}
 
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-          >
-            Login
-          </button>
-        </form>
-      </section>
+            <button type="submit">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
     );
   }
 
@@ -87,33 +93,95 @@ export default function Chef() {
     served: cookable.filter((o) => o.status === "served"),
   };
 
-  // ⭐ New Beautiful UI starts here
+  // ⭐ Kitchen Dashboard UI with Dark Theme and Rainbow Colors
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
+    <div style={{
+      padding: '20px',
+      maxWidth: '2000px',
+      margin: '0 auto',
+      background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
+      color: '#ffffff',
+      minHeight: '100vh'
+    }}>
+      <h2 className="rainbow-gradient" style={{ fontSize: '36px', fontWeight: '800', marginBottom: '30px' }}>
         🍳 Kitchen Dashboard
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '20px'
+      }}>
         {Object.entries(grouped).map(([status, list]) => {
-          const colors = {
-            new: "bg-yellow-100 border-yellow-300 text-yellow-800",
-            preparing: "bg-blue-100 border-blue-300 text-blue-800",
-            ready: "bg-green-100 border-green-300 text-green-800",
-            served: "bg-gray-100 border-gray-300 text-gray-800",
+          const statusColors = {
+            new: {
+              bg: 'linear-gradient(135deg, rgba(255, 210, 63, 0.2), rgba(255, 107, 53, 0.2))',
+              border: 'rgba(255, 210, 63, 0.5)',
+              borderShadow: 'rgba(255, 210, 63, 0.3)',
+              borderShadowHover: 'rgba(255, 210, 63, 0.6)',
+              text: 'linear-gradient(135deg, #ffd23f, #ff6b35)',
+              button: 'linear-gradient(135deg, #ffd23f, #ff6b35)'
+            },
+            preparing: {
+              bg: 'linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(94, 114, 228, 0.2))',
+              border: 'rgba(78, 205, 196, 0.5)',
+              borderShadow: 'rgba(78, 205, 196, 0.3)',
+              borderShadowHover: 'rgba(78, 205, 196, 0.6)',
+              text: 'linear-gradient(135deg, #4ecdc4, #5e72e4)',
+              button: 'linear-gradient(135deg, #4ecdc4, #5e72e4)'
+            },
+            ready: {
+              bg: 'linear-gradient(135deg, rgba(6, 255, 165, 0.2), rgba(78, 205, 196, 0.2))',
+              border: 'rgba(6, 255, 165, 0.5)',
+              borderShadow: 'rgba(6, 255, 165, 0.3)',
+              borderShadowHover: 'rgba(6, 255, 165, 0.6)',
+              text: 'linear-gradient(135deg, #06ffa5, #4ecdc4)',
+              button: 'linear-gradient(135deg, #06ffa5, #4ecdc4)'
+            },
+            served: {
+              bg: 'linear-gradient(135deg, rgba(94, 114, 228, 0.2), rgba(168, 85, 247, 0.2))',
+              border: 'rgba(94, 114, 228, 0.5)',
+              borderShadow: 'rgba(94, 114, 228, 0.3)',
+              borderShadowHover: 'rgba(94, 114, 228, 0.6)',
+              text: 'linear-gradient(135deg, #5e72e4, #a855f7)',
+              button: 'linear-gradient(135deg, #5e72e4, #a855f7)'
+            },
           };
+
+          const colors = statusColors[status] || statusColors.served;
 
           return (
             <section
               key={status}
-              className={`border rounded-2xl shadow-md p-4 ${colors[status]}`}
+              style={{
+                padding: '20px',
+                borderRadius: '20px',
+                border: `2px solid ${colors.border}`,
+                background: colors.bg,
+                boxShadow: `0 8px 32px ${colors.borderShadow}`
+              }}
             >
-              <h3 className="text-xl font-semibold text-center capitalize mb-4">
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '800',
+                textAlign: 'center',
+                textTransform: 'capitalize',
+                marginBottom: '20px',
+                background: colors.text,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
                 {status}
               </h3>
 
               {list.length === 0 && (
-                <p className="text-sm text-center opacity-60 italic">
+                <p style={{
+                  fontSize: '14px',
+                  textAlign: 'center',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  fontStyle: 'italic',
+                  padding: '20px'
+                }}>
                   No orders here
                 </p>
               )}
@@ -121,25 +189,54 @@ export default function Chef() {
               {list.map((o) => (
                 <div
                   key={o._id}
-                  className="bg-white rounded-xl p-4 shadow-sm mb-4 border"
+                  style={{
+                    padding: '16px',
+                    borderRadius: '16px',
+                    marginBottom: '16px',
+                    background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%)',
+                    border: '2px solid rgba(255, 0, 110, 0.3)',
+                    boxShadow: '0 4px 20px rgba(255, 0, 110, 0.2)'
+                  }}
                 >
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="font-semibold text-gray-700">
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '15px'
+                  }}>
+                    <span style={{
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: '#ffffff',
+                      textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                    }}>
                       Table #{o.tableId}
                     </span>
-                    <span className="text-xs px-2 py-1 rounded bg-gray-200">
+                    <span style={{
+                      fontSize: '12px',
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      background: colors.bg,
+                      border: `1px solid ${colors.border}`,
+                      color: '#ffffff',
+                      fontWeight: '600'
+                    }}>
                       {o.status}
                     </span>
                   </div>
 
-                  <div className="text-sm text-gray-700 mb-2">
-                    <strong>Items:</strong>
-                    <ul className="list-disc ml-5 mt-1">
+                  <div style={{
+                    fontSize: '14px',
+                    color: '#e0e0e0',
+                    marginBottom: '12px'
+                  }}>
+                    <strong style={{ color: '#ffffff', display: 'block', marginBottom: '8px' }}>Items:</strong>
+                    <ul style={{ margin: 0, paddingLeft: '20px', listStyle: 'disc' }}>
                       {o.items.map((i) => (
-                        <li key={i.name}>
-                          {i.name} x{i.quantity}{" "}
+                        <li key={i.name} style={{ marginBottom: '6px' }}>
+                          <span style={{ color: '#ffffff', fontWeight: '600' }}>{i.name}</span> x{i.quantity}{" "}
                           {i.customizations && (
-                            <span className="italic text-gray-500">
+                            <span style={{ color: '#e0e0e0', fontStyle: 'italic' }}>
                               ({i.customizations})
                             </span>
                           )}
@@ -149,16 +246,44 @@ export default function Chef() {
                   </div>
 
                   {o.notes && (
-                    <p className="text-sm italic text-gray-600 mt-2">
-                      <strong>Notes:</strong> {o.notes}
+                    <p style={{
+                      fontSize: '14px',
+                      fontStyle: 'italic',
+                      color: '#e0e0e0',
+                      marginTop: '12px',
+                      padding: '10px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '8px'
+                    }}>
+                      <strong style={{ color: '#ffffff' }}>Notes:</strong> {o.notes}
                     </p>
                   )}
 
-                  <div className="mt-4 flex gap-2">
+                  <div style={{ marginTop: '16px' }}>
                     {status === "new" && (
                       <button
                         onClick={() => updateStatus(o._id, "preparing")}
-                        className="w-full py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          background: colors.button,
+                          color: '#000000',
+                          border: 'none',
+                          borderRadius: '12px',
+                          fontWeight: '700',
+                          fontSize: '16px',
+                          cursor: 'pointer',
+                          boxShadow: `0 4px 20px ${colors.borderShadow}`,
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = 'translateY(-2px)';
+                          e.target.style.boxShadow = `0 6px 30px ${colors.borderShadowHover}`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = `0 4px 20px ${colors.borderShadow}`;
+                        }}
                       >
                         Start Cooking
                       </button>
@@ -167,7 +292,27 @@ export default function Chef() {
                     {status === "preparing" && (
                       <button
                         onClick={() => updateStatus(o._id, "ready")}
-                        className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          background: colors.button,
+                          color: '#000000',
+                          border: 'none',
+                          borderRadius: '12px',
+                          fontWeight: '700',
+                          fontSize: '16px',
+                          cursor: 'pointer',
+                          boxShadow: `0 4px 20px ${colors.borderShadow}`,
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = 'translateY(-2px)';
+                          e.target.style.boxShadow = `0 6px 30px ${colors.borderShadowHover}`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = `0 4px 20px ${colors.borderShadow}`;
+                        }}
                       >
                         Mark Ready
                       </button>
@@ -176,7 +321,27 @@ export default function Chef() {
                     {status === "ready" && (
                       <button
                         onClick={() => updateStatus(o._id, "served")}
-                        className="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          background: colors.button,
+                          color: '#000000',
+                          border: 'none',
+                          borderRadius: '12px',
+                          fontWeight: '700',
+                          fontSize: '16px',
+                          cursor: 'pointer',
+                          boxShadow: `0 4px 20px ${colors.borderShadow}`,
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = 'translateY(-2px)';
+                          e.target.style.boxShadow = `0 6px 30px ${colors.borderShadowHover}`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = `0 4px 20px ${colors.borderShadow}`;
+                        }}
                       >
                         Served
                       </button>

@@ -9,44 +9,30 @@ import './styles.css';
 export default function App() {
 	return (
 		<>
-			<header className="bg-white shadow-sm mb-4">
-				<div className="container">
-					<nav className="navbar navbar-expand-lg navbar-light">
-						<Link to="/" className="navbar-brand fw-bold fs-4">🍽️ Restaurant</Link>
-						<button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-							<span className="navbar-toggler-icon"></span>
-						</button>
-						<div className="collapse navbar-collapse" id="navbarNav">
-							<ul className="navbar-nav ms-auto">
-								<li className="nav-item">
-									<Link to="/" className="nav-link">Home</Link>
-								</li>
-								<li className="nav-item">
-									<Link to="/about" className="nav-link">About</Link>
-								</li>
-								<li className="nav-item">
-									<Link to="/customer" className="nav-link">Order</Link>
-								</li>
-								<li className="nav-item">
-									<Link to="/owner" className="nav-link">Owner</Link>
-								</li>
-								<li className="nav-item">
-									<Link to="/chef" className="nav-link">Chef</Link>
-								</li>
-							</ul>
-						</div>
+			<header className="main-header">
+				<div className="header-container">
+					<Link to="/" className="logo">
+						<div className="logo-icon">🍴</div>
+						<span className="logo-text">RESTFOOD RESTAURANT</span>
+					</Link>
+					<nav className="main-nav">
+						<Link to="/" className="nav-link">HOME</Link>
+						<Link to="/about" className="nav-link">ABOUT US</Link>
+						<Link to="/chef" className="nav-link">CHEFS</Link>
+						<Link to="/customer" className="nav-link">MENU</Link>
+						<Link to="/owner" className="nav-link">OWNER</Link>
+						<Link to="/about" className="nav-link">GALLERY</Link>
+						<Link to="/about" className="nav-link">CONTACTS</Link>
 					</nav>
 				</div>
 			</header>
-			<div className="container">
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/about" element={<About />} />
-					<Route path="/owner" element={<Owner />} />
-					<Route path="/customer" element={<Customer />} />
-					<Route path="/chef" element={<Chef />} />
-				</Routes>
-			</div>
+			<Routes>
+				<Route path="/" element={<Home />} />
+				<Route path="/about" element={<About />} />
+				<Route path="/owner" element={<Owner />} />
+				<Route path="/customer" element={<Customer />} />
+				<Route path="/chef" element={<Chef />} />
+			</Routes>
 		</>
 	);
 }
